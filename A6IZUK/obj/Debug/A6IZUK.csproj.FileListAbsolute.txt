@@ -1,0 +1,15 @@
+C:\Users\szbrn\Desktop\OE-KGK Gazdaságinformatikus\Tantárgyak\SZTF2\FÉLÉVES FELADAT\A6IZUK\A6IZUK\bin\Debug\A6IZUK.exe.config
+C:\Users\szbrn\Desktop\OE-KGK Gazdaságinformatikus\Tantárgyak\SZTF2\FÉLÉVES FELADAT\A6IZUK\A6IZUK\bin\Debug\A6IZUK.exe
+C:\Users\szbrn\Desktop\OE-KGK Gazdaságinformatikus\Tantárgyak\SZTF2\FÉLÉVES FELADAT\A6IZUK\A6IZUK\bin\Debug\A6IZUK.pdb
+C:\Users\szbrn\Desktop\OE-KGK Gazdaságinformatikus\Tantárgyak\SZTF2\FÉLÉVES FELADAT\A6IZUK\A6IZUK\obj\Debug\A6IZUK.csproj.AssemblyReference.cache
+C:\Users\szbrn\Desktop\OE-KGK Gazdaságinformatikus\Tantárgyak\SZTF2\FÉLÉVES FELADAT\A6IZUK\A6IZUK\obj\Debug\A6IZUK.csproj.CoreCompileInputs.cache
+C:\Users\szbrn\Desktop\OE-KGK Gazdaságinformatikus\Tantárgyak\SZTF2\FÉLÉVES FELADAT\A6IZUK\A6IZUK\obj\Debug\A6IZUK.exe
+C:\Users\szbrn\Desktop\OE-KGK Gazdaságinformatikus\Tantárgyak\SZTF2\FÉLÉVES FELADAT\A6IZUK\A6IZUK\obj\Debug\A6IZUK.pdb
+C:\Users\0322s\Downloads\FÉLÉVES-FELADAT\A6IZUK\A6IZUK\obj\Debug\A6IZUK.csproj.AssemblyReference.cache
+C:\Users\0322s\Downloads\FÉLÉVES-FELADAT\A6IZUK\A6IZUK\obj\Debug\A6IZUK.csproj.SuggestedBindingRedirects.cache
+C:\Users\0322s\Downloads\FÉLÉVES-FELADAT\A6IZUK\A6IZUK\obj\Debug\A6IZUK.csproj.CoreCompileInputs.cache
+C:\Users\0322s\Downloads\FÉLÉVES-FELADAT\A6IZUK\A6IZUK\obj\Debug\A6IZUK.exe
+C:\Users\0322s\Downloads\FÉLÉVES-FELADAT\A6IZUK\A6IZUK\obj\Debug\A6IZUK.pdb
+C:\Users\0322s\Downloads\FÉLÉVES-FELADAT\A6IZUK\A6IZUK\bin\Debug\A6IZUK.exe.config
+C:\Users\0322s\Downloads\FÉLÉVES-FELADAT\A6IZUK\A6IZUK\bin\Debug\A6IZUK.exe
+C:\Users\0322s\Downloads\FÉLÉVES-FELADAT\A6IZUK\A6IZUK\bin\Debug\A6IZUK.pdb
