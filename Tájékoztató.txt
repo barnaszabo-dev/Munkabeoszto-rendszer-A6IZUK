@@ -1,0 +1,12 @@
+Szoftvertervezés és -fejlesztés II. féléves feladat A6IZUK részére:
+
+A feladat letölthető: A6IZUK.pdf
+A feladatot javító oktató: Vékony Martin (email: vekony.martin@stud.uni-obuda.hu)
+
+Beadási határidő: 2023. december 8. 24:00
+
+A beadás a Moodle rendszeren keresztül történik majd.
+
+A gyorsabb ellenőrizhetőség érdekében azt kérnénk, hogy minden program a bemenetét külső, ember által könnyen szerkeszthető szöveges fájlokból olvassa be. Ehhez kérnénk egy rövid formátum leírást is.
+
+Bármilyen kérdés esetén, forduljon nyugodtan a javítást végző, vagy a saját kurzusát vezető oktatóhoz!

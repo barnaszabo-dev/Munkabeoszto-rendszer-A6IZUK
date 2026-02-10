@@ -1,0 +1,463 @@
+public interface IMunkaraAlkalmas
+    {
+        string Nev { get; }
+        string DolgozoAzonosito { get; }
+
+        int MunkaDij(int oraszam);
+
+        void Terheles(int munkaOra);
+
+        double TeherBiras();
+
+        bool TerheletoMeg();
+
+        List<FeladatKor> FeladatKorok { get; }
+
+    }
+public class FeladatKor
+    {
+        public string Megnevezes { get; private set; }
+
+        public int Munkaido { get; private set; }
+
+        public FeladatKor(string megnevezes, int munkaido)
+        {
+            Megnevezes = megnevezes;
+            Munkaido = munkaido;
+        }
+    }
+public class MunkaCsoport
+    {
+
+        public string Nev { get; private set; }
+        public int MaxDolgozokLetszama { get; private set; }
+
+        private RendezettLancoltLista<Alkalmazott, int> alkalmazottak = new RendezettLancoltLista<Alkalmazott, int>();
+
+        public int Letszam { get { return alkalmazottak.Count; }}
+
+        public MunkaCsoport(string nev, int max)
+        {
+            Nev = nev;
+            MaxDolgozokLetszama = max;
+        }
+
+        public MunkaCsoport(string nev, int max, RendezettLancoltLista<Alkalmazott, int> alkalmazottak_) 
+        {
+            Nev = nev;
+            MaxDolgozokLetszama = max;
+            alkalmazottak = alkalmazottak_;
+        }
+
+        public IMunkaraAlkalmas GetElsoEmber()
+        {
+            if(alkalmazottak.Count > 0) return alkalmazottak.getElsoElem();
+            throw new Exception("Nincs alkalmazott");
+        }
+
+        public void Hozzaad(Alkalmazott alkalmazott)
+        {
+            alkalmazott.NemAlkalmazhatoTobbet += Torles;
+            if(!(alkalmazottak.Count > MaxDolgozokLetszama))
+            {
+                alkalmazottak.Beszuras(alkalmazott, int.Parse(alkalmazott.DolgozoAzonosito.Remove(0, 2).Remove(3,2)));
+            }
+            else throw new MunkacsoportKivetelKezeles(this,"Betelt a hely");
+        }
+
+        
+
+        public bool BenneVanEAlkalmazott(Alkalmazott alkalmazott)
+        {
+            return alkalmazottak.BenneVanE(alkalmazott);
+        }
+
+        public Alkalmazott AdottIndexuDolgozo(int index)
+        {
+            if (this.alkalmazottak.Count > index) return alkalmazottak.GetItemByIndex(index);
+            else throw new MunkacsoportKivetelKezeles(this, "Túlindexelés!");
+           
+        }
+
+        public void Torles(Alkalmazott alkalmazott)
+        {
+            if (alkalmazottak.Count > 0)
+            {
+                alkalmazottak.Torles(alkalmazott);
+            }
+            else throw new MunkacsoportKivetelKezeles(this,"Nincs alkalmazott");
+
+
+        }
+    }
+public delegate void MegszunesJelzese(string message);
+public delegate void AlkalmazottEltavolitasa(Alkalmazott dolgozo);
+public abstract class Ember
+    {
+        public char Nem { get; private set; }
+        public int TeherBirasHatar { get; private set; }
+
+        public Ember(char nem) 
+        {
+            TeherBirasHatar = new Random().Next(4, 13);
+            this.Nem = nem;
+        }
+        
+    }
+public class AlkalmazottKezelo
+    {
+        public event MegszunesJelzese MunkaCsoportMegszunese;
+        public RendezettLancoltLista<MunkaCsoport, int> Munkacsoportok { get; private set; } = new RendezettLancoltLista<MunkaCsoport, int>();
+
+        public void BeszurasUjAlkalmazottUjMunkaCsoport(List<Alkalmazott> alkalmazottak, MunkaCsoport munkaCsoport)
+        {
+            foreach (var alkalmazott in alkalmazottak)
+            {
+                alkalmazott.AzonositoMegadasa(GeneralasID(alkalmazott.Nem));
+                alkalmazott.NemAlkalmazhatoTobbet += TorlesAlkalmazott;
+                munkaCsoport.Hozzaad(alkalmazott);
+            }
+            this.BeszurasMunkacsoport(munkaCsoport);
+        }
+
+        public void BeszurasUjAlkalmazott(Alkalmazott alkalmazott, MunkaCsoport munkaCsoport)
+        {
+            alkalmazott.AzonositoMegadasa(GeneralasID(alkalmazott.Nem));
+            this.Munkacsoportok.GetReferencia(munkaCsoport).Hozzaad(alkalmazott);
+
+        }
+        public void BeszurasMunkacsoport(MunkaCsoport munkacsoport)
+        {
+            if(munkacsoport.Letszam != 0) this.Munkacsoportok.Beszuras(munkacsoport, int.Parse(munkacsoport.GetElsoEmber().DolgozoAzonosito.Remove(0, 2).Remove(3, 2)));
+            else throw new AlkalmazottKezeloKivetelKezeles("Nem lehet beszúrni 0 fős munkacsoportot");
+
+
+        }
+
+        public void HozzaadasOraAlkalmazott(Alkalmazott alkalmazott, int ora)
+        {
+            foreach (MunkaCsoport munkacsoport in Munkacsoportok)
+            {
+                if (munkacsoport.BenneVanEAlkalmazott(alkalmazott))
+                {
+                    alkalmazott.Terheles(ora);
+                }
+            }
+        }
+        public MunkaCsoport AdottIndexuMunkaCsoport(int index)
+        {
+            if(this.Munkacsoportok.Count > index) return Munkacsoportok.GetItemByIndex(index);
+            throw new AlkalmazottKezeloKivetelKezeles("Túlindexelés!");
+
+
+        }
+
+        public Alkalmazott getAlkalmazottByIndex(int index, MunkaCsoport munkaCsoport)
+        {
+            if(Munkacsoportok.BenneVanE(munkaCsoport))
+            {
+                return Munkacsoportok.GetReferencia(munkaCsoport).AdottIndexuDolgozo(index);
+            }
+            throw new AlkalmazottKezeloKivetelKezeles("Nincs ilyen munkacsoport");   
+
+        }
+
+
+        public void TorlesAlkalmazott(Alkalmazott alkalmazott)
+        {
+            foreach (MunkaCsoport munkacsoport in Munkacsoportok)
+            {
+                if(munkacsoport.BenneVanEAlkalmazott(alkalmazott))
+                {
+                    munkacsoport.Torles(alkalmazott);
+                    if(munkacsoport.Letszam == 0)
+                    {
+                        Munkacsoportok.Torles(munkacsoport);
+                        MunkaCsoportMegszunese.Invoke($"A(z) {munkacsoport.Nev} nevű munkacsoport megszűnt!");
+                    }
+                }
+            }
+        }
+
+
+
+        private string GeneralasID(char nem)
+        {
+            Random random = new Random();
+
+
+            const int offset = 65; // ASCII code for 'A'
+            const int numberOfBigChars = 26; // Total number of capital letters
+
+            int randomNumberForCharacters1 = random.Next(numberOfBigChars);
+            int randomNumberForCharacters2 = random.Next(numberOfBigChars);
+            char randomBigChar1 = (char)(offset + randomNumberForCharacters1);
+            char randomBigChar2 = (char)(offset + randomNumberForCharacters2);
+
+            int randomNumberForNumbers = random.Next(100,1000);
+
+            return $"{nem}-{randomNumberForNumbers}{randomBigChar1}{randomBigChar2}";
+        }
+     
+
+    }
+public sealed class Alkalmazott : Ember, IMunkaraAlkalmas
+    {
+        public event AlkalmazottEltavolitasa NemAlkalmazhatoTobbet;
+        public string Nev { get; private set; }
+
+        public string DolgozoAzonosito { get; private set; }
+        public List<FeladatKor> FeladatKorok { get; private set; }
+
+        public int MunkaOra { get; private set; }
+
+        public int OraDij { get; private set; }
+
+
+        public Alkalmazott(string nev, char nem, List<FeladatKor> feladatKorok, int oraDij) : base(nem)
+        {
+            Nev = nev;
+            foreach (FeladatKor feladatkor in feladatKorok) Terheles(feladatkor.Munkaido);
+            FeladatKorok = feladatKorok;
+            OraDij = oraDij;
+        }
+
+        public void FeladatkorHozzaadasa(FeladatKor feladatKor)
+        {
+            Terheles(feladatKor.Munkaido);
+            this.FeladatKorok.Add(feladatKor);
+        }
+
+        public void AzonositoMegadasa(string ID)
+        {
+            this.DolgozoAzonosito = ID;
+        }
+
+
+        public int MunkaDij(int oraszam)
+        {
+            return oraszam * this.OraDij;
+        }
+
+        public void Terheles(int munkaOra)
+        {
+            if (!(this.TeherBirasHatar < this.MunkaOra)) this.MunkaOra += munkaOra;
+            else throw new AlkalmazottKivetelKezeles(this, "Nem lehet ennél többet terhelni");
+        }
+
+        public double TeherBiras()
+        {
+            return this.MunkaOra / this.TeherBirasHatar;
+        }
+
+        public bool TerheletoMeg()
+        {
+            bool megE = this.TeherBirasHatar < this.MunkaOra;
+            if (megE) NemAlkalmazhatoTobbet.Invoke(this); 
+            return megE;
+        }
+public class RendezettLancoltLista<T, K> :IEnumerable where K : IComparable<K>
+    {
+        public int Count { get; private set; } = 0;
+
+
+        ListaElem _fej;
+
+        
+        class ListaBejaro : IEnumerator
+        {
+            ListaElem fej;
+            ListaElem aktualis;
+
+            public ListaBejaro(ListaElem fej)
+            {
+                this.fej = fej;
+                this.aktualis = new ListaElem();
+                this.aktualis.kovetkezo = fej;
+            }
+            public object Current { get { return aktualis.tartalom; } }
+
+            public bool MoveNext()
+            {
+                aktualis = aktualis.kovetkezo;
+                return aktualis != null;
+            }
+
+            public void Reset()
+            {
+                aktualis = new ListaElem();
+                aktualis.kovetkezo = fej;
+            }
+        }
+        private class ListaElem
+        {
+            public K kulcs;
+            public T tartalom;
+            public ListaElem kovetkezo;
+            public ListaElem(T tartalom, K kulcs)
+            {
+                this.kulcs = kulcs;
+                this.tartalom = tartalom;
+                kovetkezo = null;
+            }
+            public ListaElem()
+            {
+
+            }
+        }
+
+        public IEnumerator GetEnumerator() 
+        { 
+            return new ListaBejaro(_fej);
+        }
+
+        public T GetReferencia(T tartalom)
+        {            
+            ListaElem aktualis = _fej;
+            while (!tartalom.Equals(aktualis.tartalom))
+            {
+                aktualis = aktualis.kovetkezo;
+            }
+            return aktualis.tartalom;
+            
+        }
+
+        public T GetItemByIndex(int index)
+        {
+            ListaElem aktualis = _fej;         
+            for (int i = 0; i < index; i++)
+            {
+                aktualis = aktualis.kovetkezo;
+            }
+            return aktualis.tartalom;
+        }
+
+        public bool BenneVanE(T tartalom)
+        {
+            ListaElem aktualis = _fej;
+
+            if (_fej == null) return false;
+
+            while (!tartalom.Equals(aktualis.tartalom))
+            {
+                if( aktualis.kovetkezo == null) return false;
+                aktualis = aktualis.kovetkezo;
+            }
+            return true;
+
+        }
+
+        public void Beszuras(T ujTartalom, K ujKulcs)
+        {
+
+            ListaElem ujElem = new ListaElem(ujTartalom, ujKulcs);
+
+            if (_fej == null)
+            {
+                _fej = ujElem;
+            }
+            else
+            {
+                ListaElem aktualis = _fej;
+                while (ujKulcs.CompareTo(aktualis.kulcs) > 0)
+                {
+                    aktualis = aktualis.kovetkezo;
+                }
+                ujElem.kovetkezo = aktualis.kovetkezo;
+                aktualis.kovetkezo = ujElem;
+            }
+            this.Count++;
+        }
+
+        public void Torles(T tartalom)
+        {
+            
+            ListaElem aktualis = _fej;
+            ListaElem elozo = null;
+            while (!tartalom.Equals(aktualis.tartalom))
+            {
+                elozo = aktualis;
+                aktualis = aktualis.kovetkezo;
+            }
+            if(elozo == null)
+            {
+                _fej = aktualis.kovetkezo;
+            }
+            else
+            {
+                elozo.kovetkezo = aktualis.kovetkezo;
+
+            }
+            this.Count--;
+        }
+
+        public T getElsoElem()
+        {
+            return _fej.tartalom;
+        }
+    }
+public class AlkalmazottKezeloKivetelKezeles : SajatKivetelkezeles
+{
+    public AlkalmazottKezeloKivetelKezeles(string uzenet): base($"Alkalmazott kezelőnél: {uzenet}") { }
+ 
+}
+public class AlkalmazottKivetelKezeles : SajatKivetelkezeles
+{
+    public AlkalmazottKivetelKezeles(Alkalmazott alkalmazott, string uzenet) : base($"A {alkalmazott.DolgozoAzonosito} azonosítóval rendelkező alkalmazottnál: {uzenet}") { }
+}
+public class MunkacsoportKivetelKezeles : SajatKivetelkezeles
+{
+    public MunkacsoportKivetelKezeles(MunkaCsoport munkacsoport, string uzenet) : base($"A {munkacsoport.Nev} nevű munkacsoportnál: {uzenet}") { } 
+}
+public class SajatKivetelkezeles : Exception
+{
+    public SajatKivetelkezeles(string uzenet): base($"Saját osztályon belüli kivételkezelés\n--{uzenet}") { }
+}
+internal class Program
+    {
+        static void Main(string[] args)
+        {
+            try
+            {
+                var alkalmazottKezelo = new AlkalmazottKezelo();
+                alkalmazottKezelo.MunkaCsoportMegszunese += (string uzenet) => { Console.WriteLine($"{uzenet}\n"); };
+                alkalmazottKezelo.BeszurasUjAlkalmazottUjMunkaCsoport(new List<Alkalmazott>() {
+               
+                new Alkalmazott("HagymaEvo Aladar", 'F', new List<FeladatKor>() { new FeladatKor("WC-tisztito", 4) }, 500000),
+                new Alkalmazott("Ceklakopo Eva", 'N', new List<FeladatKor>() { new FeladatKor("Zuhanyzo-tisztito", 4) }, 700000),
+                new Alkalmazott("Zellerrezelo Bela", 'F', new List<FeladatKor>() { new FeladatKor("Folyosok-tisztito", 4) }, 600000)
+            }, new MunkaCsoport("Tisztítók", 10));
+
+                alkalmazottKezelo.BeszurasUjAlkalmazottUjMunkaCsoport(
+
+                new List<Alkalmazott>() {
+                 new Alkalmazott("HMarika", 'N', new List<FeladatKor>() { new FeladatKor("Tortenelemtanar", 2) }, 100000),
+                 new Alkalmazott("Katailin", 'N', new List<FeladatKor>() { new FeladatKor("Biologiatanar", 8) }, 5000),
+                 new Alkalmazott("Krisztina", 'N', new List<FeladatKor>() { new FeladatKor("Fizikatanar",8) }, 7000)
+                }, new MunkaCsoport("Tanitok", 10));
+
+                alkalmazottKezelo.TorlesAlkalmazott(alkalmazottKezelo.AdottIndexuMunkaCsoport(0).AdottIndexuDolgozo(0));
+                alkalmazottKezelo.TorlesAlkalmazott(alkalmazottKezelo.AdottIndexuMunkaCsoport(0).AdottIndexuDolgozo(0));
+                alkalmazottKezelo.TorlesAlkalmazott(alkalmazottKezelo.AdottIndexuMunkaCsoport(0).AdottIndexuDolgozo(0));
+                alkalmazottKezelo.HozzaadasOraAlkalmazott(alkalmazottKezelo.AdottIndexuMunkaCsoport(0).AdottIndexuDolgozo(0), 1);
+
+            }
+            catch(SajatKivetelkezeles e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Mivel ez súlyos hiba, véget ért a program működése!");
+                Environment.Exit(1);
+            }
+
+
+              
+
+         
+                
+
+            Console.ReadKey();
+        }
+    }

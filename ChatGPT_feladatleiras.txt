@@ -1,0 +1,28 @@
+Kérem C# programnyelven írasson ki és ne hiányoljon az implementációkat az alábbi szerint:
+E munkabeosztó rendszerben különböző emberek kerülnek felvitelre, más-más helyekről és végzettséggel, ezért, hogy a rendszer megfelelően működjön egy IMunkaraAlkalmas interfészen keresztül biztosítsa a működést, ami tartalmaz:
+- Név tulajdonságot
+- DolgozóAzonosító tulajdonságot
+- MunkaDíj ( óraszám ) metódust, amely megadja, hogy adott ember alkalmazása mekkora anyagi vonzattal jár
+- Terhelés ( munkaóra ) metódust, amely adott embert leterhel a munkaórák számával
+- Teherbírás ( ) metódust, amely adott ember teherbírását adja vissza, amely 0 és 1 közötti érték
+- TerhelhetőMég ( ) metódust, amely igaz/hamis értéket ad vissza
+- FeladatKörök tulajdonságot, amely lista formájában tárol el FeladatKör típusú elemeket
+Készítsen el és építsen ki megfelelő osztályhierarchiát, amelyekkel megvalósíthatja a feladatokat. Tartalmazzon absztrakt és lezárt osztályokat, ahol az életszerűség megköveteli. A szükséges osztályok valósítsák meg a fentebbi interfészt, és ezekből
+hozzon létre mintapéldányokat.
+- Pl. Gipsz Jakab ( név: Gipsz Jakab, dolgozóAzonosító: F-123AA, lakhely: ... )
+Biztosítsa, hogy a minimálisan szükséges adatok mellett, legyenek még az életszerűséget reprezentáló mezők/tulajdonságok és metódusok az egyes osztályokban! A FeladatKor osztály egy string típusú megnevezés mezőt és hozzá tartozó tulajdonságot tartalmazzon minimum, tetszés szerint ha a feladat megköveteli bővíthető.
+Készítsen egy MunkaCsoport osztályt, ahol n darab dolgozót tudunk egy csoportba tenni. A belső adatszerkezet rendezett láncolt lista legyen. Egy darab munkacsoport példány, egy darab munkacsoportba tartozó dolgozókat reprezentál. A rendezettséget a dolgozó azonosítójának számjegyeket tartalmazó részét vegye alapul.
+Dolgozók létrehozását egy dedikált, AlkalmazottKezelo osztályon keresztül végezze, metódusokkal. A Main függvényből ne legyen direktben példány lértehozva, ezt a funkciót szervezze ki ide, az osztályba. Hasonlóképpen, adott munkacsoporthoz is ezen a vezérlő osztályon keresztül tudjon alkalmazottat hozzáadni. Szintén ezen osztályon belül:
+
+1. Készítsen metódust, amellyel MunkaCsoport típusokat tudunk felvinni, amelyeket az osztályon belül egy láncolt lista adatszerkezetben tároljon el. A listát legyen képes rendezni. A rendezés alapján a munkacsoport első emberének munkaazonosítója (azon belül a 3 számjegy) adja a sorrendet.
+
+2. Készítsen egy belső használatra való metódust, amely a dolgozó azonosító generálását végzi el. A generálás eredménye, egy 5 karakterből álló string kell legyen, ahol az első karakter a férfi/nő megfeleltetést jelenti. Ezt jelölje F (mint férfi) vagy N (mint nő). Ezt követően kötőjellel elválasztva egy generált 3 számjegyű érték, majd egyből utána két darab generált nagybetűs karakter.
+
+3. A dolgozók rendelkezzenek egy NemAlkalmazhatoTobbet nevű eseménnyel. Amennyiben ez aktiválódik, akkor erről a szükséges rendszer is értesüljön és távolítsa el a dolgozót az adott munkacsoportból. Ha ő volt az utolsó ember e csoportban, úgy a munkacsoportot is szüntesse meg, és erről esemény formájában jelezzen.
+
+4. Készítsen egy optimális csapatbeosztás funkciót, amely visszalépéses keresés segítségével minden egyes munkacsoportot megvizsgál és azon belül a csoportban úgy osztja be az embereket, hogy mindenki szerepet kaphasson a munkában, egyik se legyen túlterhelt, ugyanakkor alulterhelt sem. Túlterhelésről akkor beszélhetünk, ha a dolgozó 95%-osan vagy a fölött van terhelve, alulterhelésről pedig ha 15% vagy annál alacsonyabb. Ehhez használja a dolgozó feladatkörök listáját, amelyből látható, hogy mely dolgozót mely feladatkörökre lehet beosztani.
+
+
+A feladat megoldása során tartsa be az OOP alapelveket, kivételkezelés segítségével kezelje a felmerülő problémás eseteket. Ahol szükségesnek érzi, egészítse ki a megadott osztályhierarchiát. A feladathoz kapcsolódó adatszerkezeteket (lista, bináris keresőfa, stb.) ön valósítsa meg és működésükhez implementálja a szükséges metódusokat (pl. Hozzáadás, Törlés, Keresés, Beszúrás).
+MÁS SZÓVAL
+Ezért ennél a feladatnál az objektumorientált programozás elveit kell követnie, és a felmerülő problémákat a kivételek kezelésével kell kezelnie. Ahol szükségesnek érzi, bővítheti a megadott osztályhierarchiát. A feladathoz kapcsolódó adatszerkezeteket, például listákat vagy bináris keresőfákat, magadnak kell implementálnod, és tartalmaznod kell a működésükhöz szükséges metódusokat, mint például az add, delete, search, insert és így tovább. Győződjön meg róla, hogy teljes mértékben teszteli a kódot és a kivételeket. Szóljon, ha bármilyen más kérdés merülne fel!

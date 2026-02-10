@@ -1,0 +1,18 @@
+public class SajatKivetelkezeles : Exception
+    {
+        public SajatKivetelkezeles(string uzenet): base($"Saját osztályon belüli kivételkezelés\n--{uzenet}") { }
+    }
+
+public class MunkacsoportKivetelKezeles : SajatKivetelkezeles
+    {
+        public MunkacsoportKivetelKezeles(MunkaCsoport munkacsoport, string uzenet) : base($"A {munkacsoport.Nev} nevű munkacsoportnál: {uzenet}") { } 
+    }
+public class AlkalmazottKezeloKivetelKezeles : SajatKivetelkezeles
+    {
+        public AlkalmazottKezeloKivetelKezeles(string uzenet): base($"Alkalmazott kezelőnél: {uzenet}") { }
+     
+    }
+public class AlkalmazottKivetelKezeles : SajatKivetelkezeles
+    {
+        public AlkalmazottKivetelKezeles(Alkalmazott alkalmazott, string uzenet) : base($"A {alkalmazott.DolgozoAzonosito} azonosítóval rendelkező alkalmazottnál: {uzenet}") { }
+    }

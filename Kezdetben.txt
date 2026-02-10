@@ -1,0 +1,155 @@
+ public class AlkalmazottKezelo
+ {
+     private List<Alkalmazott> alkalmazottak;
+
+     public AlkalmazottKezelo()
+     {
+         alkalmazottak = new List<Alkalmazott>();
+     }
+
+     public void Hozzaad(Alkalmazott ujAlkalmazott)
+     {
+         alkalmazottak.Add(ujAlkalmazott);
+     }
+
+     public bool Torol(string dolgozoAzonosito)
+     {
+         var alkalmazott = alkalmazottak.FirstOrDefault(a => a.DolgozoAzonosito == dolgozoAzonosito);
+         return alkalmazott != null && alkalmazottak.Remove(alkalmazott);
+     }
+
+     public Alkalmazott Keres(string dolgozoAzonosito)
+     {
+         return alkalmazottak.FirstOrDefault(a => a.DolgozoAzonosito == dolgozoAzonosito);
+     }
+
+     public bool Beszur(Alkalmazott ujAlkalmazott, int index)
+     {
+         if (index >= 0 && index <= alkalmazottak.Count)
+         {
+             alkalmazottak.Insert(index, ujAlkalmazott);
+             return true;
+         }
+         return false;
+     }
+
+     public void Listaz()
+     {
+         foreach (var alkalmazott in alkalmazottak)
+         {
+             Console.WriteLine($"Név: {alkalmazott.Nev}, Azonosító: {alkalmazott.DolgozoAzonosito}, Napi díj: {alkalmazott.OraDij} Nettó/óra, Teljesítmény: {alkalmazott.SzamitottMunkadij}");
+         }
+     }
+ }
+
+public class FeladatKor
+{
+    public string Megnevezes { get; private set; }
+
+    public FeladatKor(string megnevezes)
+    {
+        Megnevezes = megnevezes;
+    }
+}
+
+public class MunkaCsoport
+{
+    private List<IMunkaraAlkalmas> alkalmazottak = new List<IMunkaraAlkalmas>();
+
+    public void Hozzaad(IMunkaraAlkalmas alkalmazott)
+    {
+        alkalmazottak.Add(alkalmazott);
+    }
+
+    public bool Torles(IMunkaraAlkalmas alkalmazott)
+    {
+        return alkalmazottak.Remove(alkalmazott);
+    }
+
+    public IMunkaraAlkalmas Kereses(string dolgozoAzonosito)
+    {
+        return alkalmazottak.FirstOrDefault(alk => alk.DolgozoAzonosito == dolgozoAzonosito);
+    }
+
+    public void Beszuras(int index, IMunkaraAlkalmas alkalmazott)
+    {
+        if (index >= 0 && index <= alkalmazottak.Count)
+        {
+            alkalmazottak.Insert(index, alkalmazott);
+        }
+        else
+        {
+            throw new IndexOutOfRangeException("Az index érvénytelen a beszúráshoz.");
+        }
+    }
+
+    public override string ToString()
+    {
+        return string.Join(", ", alkalmazottak.Select(a => a.Nev));
+    }
+}
+
+public class Alkalmazott : IMunkaraAlkalmas
+{
+    public string Nev { get; private set; }
+    public string DolgozoAzonosito { get; private set; }
+    public List<FeladatKor> FeladatKorok { get; private set; }
+    public double OraDij { get; set; }
+
+    // Az alkalmazott munkadíja az óradíja szorozva az elvégzett órák számával.
+    public double SzamitottMunkadij => OraDij * FeladatKorok.Count * 8; // feltételezzük, hogy minden feladat egy teljes munkanapot vesz igénybe
+
+    public Alkalmazott(string nev, string dolgozoAzonosito, List<FeladatKor> feladatKorok, double oraDij)
+    {
+        Nev = nev;
+        DolgozoAzonosito = dolgozoAzonosito;
+        FeladatKorok = feladatKorok;
+        OraDij = oraDij;
+    }
+
+    public bool ElfogadhatMaxTerheles(int terheles)
+    {
+        // A feladatok száma nem haladhatja meg a megadott terhelést
+        return FeladatKorok.Count <= terheles;
+    }
+}
+public interface IMunkaraAlkalmas
+{
+    string Nev { get; }
+    string DolgozoAzonosito { get; }
+    List<FeladatKor> FeladatKorok { get; }
+    double OraDij { get; set; }
+    double SzamitottMunkadij { get; }
+    bool ElfogadhatMaxTerheles(int terheles);
+}
+static void Main(string[] args)
+{
+    var alkalmazottKezelo = new AlkalmazottKezelo();
+
+    // Alkalmazottak hozzáadása
+    alkalmazottKezelo.Hozzaad(new Alkalmazott("Kis Géza", "KG001", new List<FeladatKor>(), 2000));
+    alkalmazottKezelo.Hozzaad(new Alkalmazott("Nagy Anna", "NA002", new List<FeladatKor>(), 2200));
+    alkalmazottKezelo.Hozzaad(new Alkalmazott("Kassai Kornélia", "KK003", new List<FeladatKor>(), 2700));
+
+    // Egy alkalmazott törlése
+    alkalmazottKezelo.Torol("KG001");
+
+    // Egy új alkalmazott beszúrása a listába
+    alkalmazottKezelo.Beszur(new Alkalmazott("Közepes Joe", "KJ004", new List<FeladatKor>(), 2100), 0);
+
+    // Alkalmazottak listázása
+    alkalmazottKezelo.Listaz();
+
+    // Alkalmazott keresése
+    var alkalmazott = alkalmazottKezelo.Keres("NA002"); //Ide beírhatja tetszőleges azonosító számot
+    if (alkalmazott != null)
+    {
+        Console.WriteLine($"Megtalált alkalmazott: {alkalmazott.Nev}");
+    }
+    else
+    {
+        Console.WriteLine("Nincs ilyen azonosítójú alkalmazott.");
+    }
+
+    Console.ReadKey();
+}
